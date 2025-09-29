@@ -17,11 +17,20 @@
           "manifest": "./src/webparts/fluentUi/FluentUiWebPart.manifest.json"
         }
       ]
+    },
+    "simplefomr-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/simplefomr/SimplefomrWebPart.js",
+          "manifest": "./src/webparts/simplefomr/SimplefomrWebPart.manifest.json"
+        }
+      ]
     }
   },
   "externals": {},
   "localizedResources": {
     "FirstWebpartWebPartStrings": "lib/webparts/firstWebpart/loc/{locale}.js",
-    "FluentUiWebPartStrings": "lib/webparts/fluentUi/loc/{locale}.js"
+    "FluentUiWebPartStrings": "lib/webparts/fluentUi/loc/{locale}.js",
+    "SimplefomrWebPartStrings": "lib/webparts/simplefomr/loc/{locale}.js"
   }
 }

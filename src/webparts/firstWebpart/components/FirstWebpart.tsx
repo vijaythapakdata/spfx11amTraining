@@ -110,6 +110,15 @@ text='Save' iconProps={{iconName:'Save'}}
 <DefaultButton
 text='Cancel' iconProps={{iconName:'Cancel'}}
 />
+{/* html vs fluent ui  */}
+
+<input title='HTML textfiled ' type='text'/>
+<br/>
+<button>Button</button>
+<select>
+  <option label='HR'>HR</option>
+    <option label='IT'>IT</option>
+</select>
     </form>
     </>
   )
