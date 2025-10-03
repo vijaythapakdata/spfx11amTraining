@@ -14,6 +14,7 @@ import { ISimplefomrProps } from './components/ISimplefomrProps';
 
 export interface ISimplefomrWebPartProps {
   description: string;
+  ListName:string
 }
 
 export default class SimplefomrWebPart extends BaseClientSideWebPart<ISimplefomrWebPartProps> {
@@ -21,7 +22,8 @@ export default class SimplefomrWebPart extends BaseClientSideWebPart<ISimplefomr
   private _isDarkTheme: boolean = false;
   private _environmentMessage: string = '';
 
-  public render(): void {
+  public async render(): Promise<void> {
+    const cityopt=await this.getLookupValues();
     const element: React.ReactElement<ISimplefomrProps> = React.createElement(
       Simplefomr,
       {
@@ -30,9 +32,13 @@ export default class SimplefomrWebPart extends BaseClientSideWebPart<ISimplefomr
         environmentMessage: this._environmentMessage,
         hasTeamsContext: !!this.context.sdks.microsoftTeams,
         userDisplayName: this.context.pageContext.user.displayName,
-        ListName:"First List",
+        ListName:this.properties.ListName,
         context:this.context,
-        siteurl:this.context.pageContext.web.absoluteUrl
+        siteurl:this.context.pageContext.web.absoluteUrl,
+        DepartmentOptions:await this.getChoiceFieldValues(this.context.pageContext.web.absoluteUrl,this.properties.ListName,"Department"),
+        GenderOptions:await this.getChoiceFieldValues(this.context.pageContext.web.absoluteUrl,this.properties.ListName,"Gender"),
+        SkillsOptions:await this.getChoiceFieldValues(this.context.pageContext.web.absoluteUrl,this.properties.ListName,"Skills"),
+        CityOptions:cityopt
 
       }
     );
@@ -112,8 +118,8 @@ export default class SimplefomrWebPart extends BaseClientSideWebPart<ISimplefomr
             {
               groupName: strings.BasicGroupName,
               groupFields: [
-                PropertyPaneTextField('description', {
-                  label: strings.DescriptionFieldLabel
+                PropertyPaneTextField('ListName', {
+                  label: strings.ListFieldLabel
                 })
               ]
             }
@@ -121,5 +127,55 @@ export default class SimplefomrWebPart extends BaseClientSideWebPart<ISimplefomr
         }
       ]
     };
+  }
+  //Get Choice value
+  private async getChoiceFieldValues(siteurl:string,ListName:string,fieldName:string):Promise<any>{
+    try{
+const response=await fetch(`${siteurl}_api/web/lists/getbytitle('${ListName}')/fields?$filter=EntityPropertyName eq '${fieldName}'`,{
+  method:'GET',
+  headers:{
+    'Accept':'application/json;odata=nometadata'
+  }
+});
+if(!response.ok){
+  throw new Error(`Error while reading choice values : ${response.status}`);
+
+}
+const data=await response.json();
+const choices=data.value[0].Choices;
+return choices.map((choice:any)=>({
+  key:choice,
+  text:choice
+}))
+    }
+    catch(err){
+console.error("err",err)
+return[];
+    }
+  }
+  //Read lookup
+
+  private async getLookupValues():Promise<any[]>{
+    try{
+const response=await fetch(`${this.context.pageContext.web.absoluteUrl}/_api/web/lists/getbytitle('Cities')/items?$select=Title,ID`,{
+  method:'GET',
+  headers:{
+    'Accept':'application/json;odata=nometadata' 
+  }
+});
+if(!response.ok){
+  throw new Error(`Error while reading lookup values : ${response.status}`);
+
+}
+const data=await response.json();
+return data.value.map((city:{ID:string,Title:string})=>({
+  key:city.ID,
+  text:city.Title
+}));
+    }
+    catch(err){
+console.error("err",err);
+return[];
+    }
   }
 }

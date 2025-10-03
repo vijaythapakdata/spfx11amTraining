@@ -9,4 +9,8 @@ export interface ISimplefomrProps {
   context:WebPartContext;
   siteurl:string;
   ListName:string;
+  DepartmentOptions:any;//Single selected dropdwon
+  GenderOptions:any;//radio button
+  SkillsOptions:any;//mulitselected dropddwon
+  CityOptions:any;//lookup
 }

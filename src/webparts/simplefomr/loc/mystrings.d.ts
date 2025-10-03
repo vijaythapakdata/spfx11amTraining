@@ -11,6 +11,7 @@ declare interface ISimplefomrWebPartStrings {
   AppOfficeEnvironment: string;
   AppOutlookEnvironment: string;
   UnknownEnvironment: string;
+  ListFieldLabel:string;
 }
 
 declare module 'SimplefomrWebPartStrings' {
