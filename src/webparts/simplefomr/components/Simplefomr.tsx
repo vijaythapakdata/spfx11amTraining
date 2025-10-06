@@ -6,7 +6,9 @@ import {Web} from "@pnp/sp/presets/all";
 import "@pnp/sp/items";
 import "@pnp/sp/lists";
 import { Dialog } from '@microsoft/sp-dialog';
-import { ChoiceGroup, Dropdown, PrimaryButton, Slider, TextField, Toggle } from '@fluentui/react';
+import { ChoiceGroup, Dropdown, IDropdownOption, PrimaryButton, Slider, TextField, Toggle } from '@fluentui/react';
+import {  PeoplePicker, PrincipalType } from "@pnp/spfx-controls-react/lib/PeoplePicker";
+// import { set } from '@microsoft/sp-lodash-subset';
 
 const Simplefomr:React.FC<ISimplefomrProps>=(props)=>{
   const [formData,setFormdata]=React.useState<ISimpleFomrState>({
@@ -19,7 +21,12 @@ const Simplefomr:React.FC<ISimplefomrProps>=(props)=>{
     Permission:false,
     Department:"",
     Gender:"",
-    City:""
+    City:"",
+    Skills:[],
+    Manager:[],
+    ManagerId:[],
+    Admin:"",
+    AdminId:""
   });
 
   const createItem=async()=>{
@@ -36,9 +43,13 @@ Score:formData.Score,
 Permission:formData.Permission,
 Gender:formData.Gender,
 Department:formData.Department,
-CityId:formData.City
+CityId:formData.City,
+Skills:{results:formData.Skills},
+AdminId:formData.AdminId,
+ManagerId:{results:formData.ManagerId}
 });
 Dialog.alert(`Item has been created successfully with ID :${item.data.Id}`);
+console.log("Items",item);
 setFormdata({
  Name:"",
     Email:"",
@@ -49,7 +60,12 @@ setFormdata({
     Permission:false,
      Department:"",
     Gender:"",
-    City:""
+    City:"",
+    Skills:[],
+     Manager:[],
+    ManagerId:[],
+    Admin:"",
+    AdminId:""
 })
 }
 catch(err){
@@ -63,7 +79,28 @@ Dialog.alert(`Erorr while creating the item : ${err}`);
     // setFormdata(prev=>({...prev,[fieldvalue]:value}))
     setFormdata(prev=>({...prev,[fieldvalue]:value}))
   }
-  
+  //on skills change
+  const onSkillsChange=(event:React.FormEvent<HTMLInputElement>,options:IDropdownOption):void=>{
+    const selectedkey=options.selected?[...formData.Skills,options.key as string]:formData.Skills.
+    filter((key)=>key!==options.key);
+    setFormdata(prev=>({...prev,Skills:selectedkey}))
+  }
+  //get admin
+  const _getAdminItems=(items: any[])=> {
+    if(items.length>0){
+    setFormdata(prev=>({...prev,Admin:items[0].text,AdminId:items[0].id}))
+    }
+    else{
+      setFormdata(prev=>({...prev,Admin:"",AdminId:""}))
+    }
+
+}
+//get manager
+const getManagers=(items:any)=>{
+  const managerName=items.map((i:any)=>i.text);
+   const managerNameId=items.map((i:any)=>i.id);
+   setFormdata(prev=>({...prev,Manager:managerName,ManagerId:managerNameId}))
+}
   return(
     <>
     <TextField
@@ -122,6 +159,38 @@ Dialog.alert(`Erorr while creating the item : ${err}`);
     options={props.GenderOptions}
     onChange={(_,options)=>FormEvent("Gender",options?.key as string)}
     selectedKey={formData.Gender}
+    />
+    <Dropdown
+    key={formData.Skills.join(',')}
+    options={props.SkillsOptions}
+    label='Skills'
+    defaultSelectedKeys={formData.Skills}
+    onChange={onSkillsChange}
+    multiSelect
+    />
+    <PeoplePicker
+    context={props.context as any}
+    titleText="Admin"
+    personSelectionLimit={1}
+    showtooltip={true}
+    onChange={_getAdminItems}
+    principalTypes={[PrincipalType.User]}
+    resolveDelay={1000}
+    ensureUser={true}
+    defaultSelectedUsers={[formData.Admin?formData.Admin:""]}
+    webAbsoluteUrl={props.siteurl}
+    />
+      <PeoplePicker
+    context={props.context as any}
+    titleText="Managers"
+    personSelectionLimit={3}
+    showtooltip={true}
+    onChange={getManagers}
+    principalTypes={[PrincipalType.User]}
+    resolveDelay={1000}
+    ensureUser={true}
+    defaultSelectedUsers={formData.Manager}
+    webAbsoluteUrl={props.siteurl}
     />
      <TextField
     label='Full Address'

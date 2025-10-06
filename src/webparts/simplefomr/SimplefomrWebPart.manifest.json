@@ -22,7 +22,7 @@
     "description": { "default": "Simplefomr description" },
     "officeFabricIconFontName": "Page",
     "properties": {
-      "description": "Simplefomr"
+      "ListName": ""
     }
   }]
 }

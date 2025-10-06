@@ -9,4 +9,9 @@ export interface ISimpleFomrState{
     Department:string;
     Gender:string;
     City:string;
+    Skills:any[];
+    Admin:any;
+    AdminId:any;
+    Manager:any[];
+    ManagerId:any[]
 }

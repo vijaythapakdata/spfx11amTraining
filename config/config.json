@@ -31,6 +31,7 @@
   "localizedResources": {
     "FirstWebpartWebPartStrings": "lib/webparts/firstWebpart/loc/{locale}.js",
     "FluentUiWebPartStrings": "lib/webparts/fluentUi/loc/{locale}.js",
-    "SimplefomrWebPartStrings": "lib/webparts/simplefomr/loc/{locale}.js"
+    "SimplefomrWebPartStrings": "lib/webparts/simplefomr/loc/{locale}.js",
+    "ControlStrings": "node_modules/@pnp/spfx-controls-react/lib/loc/{locale}.js"
   }
 }

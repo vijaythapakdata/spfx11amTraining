@@ -131,7 +131,7 @@ export default class SimplefomrWebPart extends BaseClientSideWebPart<ISimplefomr
   //Get Choice value
   private async getChoiceFieldValues(siteurl:string,ListName:string,fieldName:string):Promise<any>{
     try{
-const response=await fetch(`${siteurl}_api/web/lists/getbytitle('${ListName}')/fields?$filter=EntityPropertyName eq '${fieldName}'`,{
+const response=await fetch(`${siteurl}/_api/web/lists/getbytitle('${ListName}')/fields?$filter=EntityPropertyName eq '${fieldName}'`,{
   method:'GET',
   headers:{
     'Accept':'application/json;odata=nometadata'
