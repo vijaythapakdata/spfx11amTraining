@@ -13,5 +13,7 @@ export interface ISimpleFomrState{
     Admin:any;
     AdminId:any;
     Manager:any[];
-    ManagerId:any[]
+    ManagerId:any[];
+    DOB:any;
+    Attachments:any[];
 }

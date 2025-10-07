@@ -6,7 +6,7 @@ import {Web} from "@pnp/sp/presets/all";
 import "@pnp/sp/items";
 import "@pnp/sp/lists";
 import { Dialog } from '@microsoft/sp-dialog';
-import { ChoiceGroup, Dropdown, IDropdownOption, PrimaryButton, Slider, TextField, Toggle } from '@fluentui/react';
+import { ChoiceGroup, DatePicker, Dropdown, IDatePickerStrings, IDropdownOption, Label, PrimaryButton, Slider, TextField, Toggle } from '@fluentui/react';
 import {  PeoplePicker, PrincipalType } from "@pnp/spfx-controls-react/lib/PeoplePicker";
 // import { set } from '@microsoft/sp-lodash-subset';
 
@@ -26,7 +26,9 @@ const Simplefomr:React.FC<ISimplefomrProps>=(props)=>{
     Manager:[],
     ManagerId:[],
     Admin:"",
-    AdminId:""
+    AdminId:"",
+    DOB:"",
+    Attachments:[]
   });
 
   const createItem=async()=>{
@@ -46,8 +48,15 @@ Department:formData.Department,
 CityId:formData.City,
 Skills:{results:formData.Skills},
 AdminId:formData.AdminId,
-ManagerId:{results:formData.ManagerId}
+ManagerId:{results:formData.ManagerId},
+DOB:new Date(formData.DOB)
 });
+const itemid=item.data.id;
+//upload files
+for(const file of formData.Attachments){
+  const arrayBuffer=await file.arrayBuffer();
+  await list.items.getById(itemid).attachmentFiles.add(file.name,arrayBuffer);
+}
 Dialog.alert(`Item has been created successfully with ID :${item.data.Id}`);
 console.log("Items",item);
 setFormdata({
@@ -65,7 +74,9 @@ setFormdata({
      Manager:[],
     ManagerId:[],
     Admin:"",
-    AdminId:""
+    AdminId:"",
+    DOB:"",
+    Attachments:[]
 })
 }
 catch(err){
@@ -100,6 +111,13 @@ const getManagers=(items:any)=>{
   const managerName=items.map((i:any)=>i.text);
    const managerNameId=items.map((i:any)=>i.id);
    setFormdata(prev=>({...prev,Manager:managerName,ManagerId:managerNameId}))
+}
+//file upload
+const uploadFiles=(event:React.ChangeEvent<HTMLInputElement>):void=>{
+  const files=event.target.value;
+  if(files){
+    setFormdata(prev=>({...prev,Attachments:Array.from(files)}));
+  }
 }
   return(
     <>
@@ -192,6 +210,14 @@ const getManagers=(items:any)=>{
     defaultSelectedUsers={formData.Manager}
     webAbsoluteUrl={props.siteurl}
     />
+    <DatePicker
+    label='DOB'
+    strings={DatePickeStrings}
+    value={formData.DOB}
+    formatDate={FormateDate}
+    onSelectDate={(date)=>setFormdata(a=>({...a,DOB:date}))}
+    />
+
      <TextField
     label='Full Address'
     value={formData.FullAddress}
@@ -200,6 +226,9 @@ const getManagers=(items:any)=>{
     rows={5}
     iconProps={{iconName:'home'}}
     />
+    {/* upload */}
+    <Label>Upload File</Label>
+    <input type='file' onChange={uploadFiles} multiple/>
     <br/>
     <PrimaryButton text='Save'
     onClick={createItem}
@@ -209,3 +238,28 @@ const getManagers=(items:any)=>{
   )
 }
 export default Simplefomr;
+//date picker strings
+export const DatePickeStrings:IDatePickerStrings={
+  months:["January","February","March","April","May","June","July","August","September","October","November","December"],
+  shortMonths:["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
+  days:["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],
+  shortDays:["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],
+  goToToday:"Go to today",
+  nextMonthAriaLabel:"go to next month",
+  prevMonthAriaLabel:"go to previous",
+  nextYearAriaLabel:"go to next year",
+  prevYearAriaLabel:"go to previous year"
+}
+//date formatting
+export const FormateDate=(date:any):string=>{
+  var date1=new Date(date);
+  //get year
+  var year=date1.getFullYear();
+  //get month
+  var month=(1+date1.getMonth()).toString();
+  month=month.length>1?month:"0"+month;
+  var day=date1.getDate().toString();
+  day=day.length>1?day:"0"+day;
+  return month+"/"+day+"/"+year;
+
+}
