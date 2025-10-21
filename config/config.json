@@ -25,6 +25,14 @@
           "manifest": "./src/webparts/simplefomr/SimplefomrWebPart.manifest.json"
         }
       ]
+    },
+    "form-validation-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/formValidation/FormValidationWebPart.js",
+          "manifest": "./src/webparts/formValidation/FormValidationWebPart.manifest.json"
+        }
+      ]
     }
   },
   "externals": {},
@@ -32,6 +40,7 @@
     "FirstWebpartWebPartStrings": "lib/webparts/firstWebpart/loc/{locale}.js",
     "FluentUiWebPartStrings": "lib/webparts/fluentUi/loc/{locale}.js",
     "SimplefomrWebPartStrings": "lib/webparts/simplefomr/loc/{locale}.js",
-    "ControlStrings": "node_modules/@pnp/spfx-controls-react/lib/loc/{locale}.js"
+    "ControlStrings": "node_modules/@pnp/spfx-controls-react/lib/loc/{locale}.js",
+    "FormValidationWebPartStrings": "lib/webparts/formValidation/loc/{locale}.js"
   }
 }
